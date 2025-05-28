@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: academy-spring-2Corsi
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/academy_elite_corso
+    username: postgres
+    password: Lemuel05
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 9090
+  error:
+    # Per visualizzare tutti gli errori
+    include-stacktrace: always
