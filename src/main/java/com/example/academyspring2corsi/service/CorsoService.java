@@ -56,21 +56,30 @@ public class CorsoService {
     }
 
 
-    @EntityGraph(attributePaths = {"docente", "discente"})
+
     public CorsoDTO save(CorsoDTO c){
-        Corso corso = corsoMapper.corsoToEntity(c);
-        Corso savedCorso = corsoRepository.save(corso);
-        return corsoMapper.corsoToDto(savedCorso);
+        if(docentiClient.exists(c.getIdDocente())) {
+            Corso corso = corsoMapper.corsoToEntity(c);
+            Corso savedCorso = corsoRepository.save(corso);
+            return corsoMapper.corsoToDto(savedCorso);
+        }
+        else throw new ServiceException("Docente non trovato");
     }
+
+
 
     public CorsoDTO update(Long id, CorsoDTO corsoDTO) {
         Corso corso=corsoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Corso non trovato"));
+        if(corsoDTO.getIdDocente()==null || docentiClient.exists(corsoDTO.getIdDocente())) {
+            if(corsoDTO.getNome()!=null) corso.setNome(corsoDTO.getNome());
+            if (corsoDTO.getAnnoAccademico()!=null) corso.setAnnoAccademico(corsoDTO.getAnnoAccademico());
+            if (corsoDTO.getIdDocente()!=null) corso.setIdDocente(corsoDTO.getIdDocente());
+            Corso savedCorso = corsoRepository.save(corso);
+            return corsoMapper.corsoToDto(savedCorso);
+        }
+        else throw new ServiceException("Docente non trovato");
 
-        if(corsoDTO.getNome()!=null) corso.setNome(corsoDTO.getNome());
-        if (corsoDTO.getAnnoAccademico()!=null) corso.setAnnoAccademico(corsoDTO.getAnnoAccademico());
-        Corso savedCorso = corsoRepository.save(corso);
-        return corsoMapper.corsoToDto(savedCorso);
     }
 
 

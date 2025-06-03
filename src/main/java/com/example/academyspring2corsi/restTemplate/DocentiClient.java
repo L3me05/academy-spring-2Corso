@@ -26,7 +26,11 @@ public class DocentiClient {
     }
 
     public boolean exists(Long id) {
-
+        try{
+            return restTemplate.getForObject(URL_DOCENTI+"present?id={id}", Boolean.class, id);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Errore durante ricerca docente: " + e.getMessage(), e);
+        }
     }
 
 }
