@@ -13,6 +13,6 @@ public class CorsoDTO {
     private String nome;
     private Integer annoAccademico;
     private Long idDocente;
-
+    private DocenteDTO docente;
 
 }

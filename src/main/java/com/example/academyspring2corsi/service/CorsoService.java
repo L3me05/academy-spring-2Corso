@@ -2,13 +2,23 @@ package com.example.academyspring2corsi.service;
 
 
 import com.example.academyspring2corsi.data.dto.CorsoDTO;
+import com.example.academyspring2corsi.data.dto.DocenteDTO;
 import com.example.academyspring2corsi.data.entity.Corso;
 import com.example.academyspring2corsi.mapstruct.CorsoMapper;
 import com.example.academyspring2corsi.repository.CorsoRepository;
+import com.example.academyspring2corsi.restTemplate.DocentiClient;
 import jakarta.persistence.EntityNotFoundException;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,9 +32,11 @@ public class CorsoService {
     CorsoRepository corsoRepository;
     @Autowired
     CorsoMapper corsoMapper;
+    @Autowired
+    DocentiClient docentiClient;
 
 
-
+    private final String URL_DOCENTE = "http://localhost:8080/docenti/";
 
 
 
@@ -32,8 +44,10 @@ public class CorsoService {
     public List<CorsoDTO> findAll() {
         return corsoRepository.findAll().stream()
                 .map(corsoMapper::corsoToDto)
+                .peek(corsoDTO -> corsoDTO.setDocente(docentiClient.getDocente(corsoDTO.getIdDocente())))
                 .collect(Collectors.toList());
     }
+
 
 
     public CorsoDTO get(Long id) {
@@ -65,4 +79,27 @@ public class CorsoService {
     }
 
 
+
+
+
+
+//    public List<DocenteDTO> listaProva() {
+//        try{
+//            ResponseEntity<List<DocenteDTO>> docenti = restTemplate.exchange(
+//                    URL_DOCENTE+"list",
+//                    HttpMethod.GET,
+//                    null,
+//                    new ParameterizedTypeReference<List<DocenteDTO>>(){}
+//            );
+//            if(docenti.getStatusCode() == HttpStatus.OK && docenti.getBody() != null){
+//                return docenti.getBody();
+//            }else{
+//                return Collections.emptyList();
+//            }
+//        } catch (RestClientException e) {
+//            throw new ServiceException("Errore durante il recupero della lista docenti", e);
+//
+//        }
+//
+//    }
 }

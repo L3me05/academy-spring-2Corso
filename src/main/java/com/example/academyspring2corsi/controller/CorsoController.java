@@ -1,6 +1,7 @@
 package com.example.academyspring2corsi.controller;
 
 import com.example.academyspring2corsi.data.dto.CorsoDTO;
+import com.example.academyspring2corsi.data.dto.DocenteDTO;
 import com.example.academyspring2corsi.service.CorsoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,11 @@ public class CorsoController {
         return corsoService.findAll();
 
     }
+
+//    @GetMapping("/prova")
+//    public List<DocenteDTO> listaProva() {
+//        return corsoService.listaProva();
+//    }
 
     @PostMapping
     public CorsoDTO create(@RequestBody CorsoDTO corsoDTO) {
