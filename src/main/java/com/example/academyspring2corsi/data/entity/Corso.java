@@ -22,6 +22,9 @@ public class Corso {
     @Column(name = "anno_accademico")
     private Integer annoAccademico;
 
+    @Column(name = "id_docente")
+    private Long idDocente;
+
     
 
 

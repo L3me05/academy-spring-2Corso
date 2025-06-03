@@ -12,20 +12,7 @@ public class CorsoDTO {
 
     private String nome;
     private Integer annoAccademico;
+    private Long idDocente;
 
-    public String getNome() {
-        return nome;
-    }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public Integer getAnnoAccademico() {
-        return annoAccademico;
-    }
-
-    public void setAnnoAccademico(Integer annoAccademico) {
-        this.annoAccademico = annoAccademico;
-    }
 }
