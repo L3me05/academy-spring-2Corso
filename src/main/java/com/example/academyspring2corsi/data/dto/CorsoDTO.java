@@ -1,6 +1,7 @@
 package com.example.academyspring2corsi.data.dto;
 
 
+import com.example.academyspring2corsi.feignClient.DocentiClient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,6 @@ public class CorsoDTO {
     private String nome;
     private Integer annoAccademico;
     private Long idDocente;
-
+    private DocenteDTO docenteDTO;
 
 }
