@@ -2,10 +2,13 @@ package com.example.academyspring2corsi.service;
 
 
 import com.example.academyspring2corsi.data.dto.CorsoDTO;
+import com.example.academyspring2corsi.data.dto.DiscenteDTO;
 import com.example.academyspring2corsi.data.dto.DocenteDTO;
 import com.example.academyspring2corsi.data.entity.Corso;
 import com.example.academyspring2corsi.mapstruct.CorsoMapper;
+import com.example.academyspring2corsi.repository.CorsoDiscenteRepository;
 import com.example.academyspring2corsi.repository.CorsoRepository;
+import com.example.academyspring2corsi.webClient.DiscenteClient;
 import com.example.academyspring2corsi.webClient.DocenteClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Transient;
@@ -30,7 +33,10 @@ public class CorsoService {
     CorsoMapper corsoMapper;
     @Autowired
     DocenteClient docenteClient;
-
+    @Autowired
+    CorsoDiscenteRepository corsoDiscenteRepository;
+    @Autowired
+    DiscenteClient discenteClient;
 
 
 
@@ -41,6 +47,15 @@ public class CorsoService {
         return corsoRepository.findAll().stream()
                 .map(corsoMapper::corsoToDto)
                 .peek(corsoDTO -> corsoDTO.setDocente(docenteClient.docenteById(corsoDTO.getIdDocente())))
+                .peek(corsoDTO -> {
+                    Long idCorso = corsoRepository.findIdByNomeAndAnnoAccademico(corsoDTO.getNome(),corsoDTO.getAnnoAccademico());
+                    List<Long> idsDiscenti = corsoDiscenteRepository.findIdsDiscenteByIdCorso((idCorso));
+                    List<DiscenteDTO> discenti = new ArrayList<>();
+                    idsDiscenti.stream()
+                            .map(id -> discenti.add(discenteClient.discenteById(id)))
+                            .toList();
+                    corsoDTO.setDiscenti(discenti);
+                })
                 .collect(Collectors.toList());
     }
 

@@ -14,6 +14,6 @@ public class CorsoDTO {
     private Integer annoAccademico;
     private Long idDocente;
     private DocenteDTO docente;
-
+    private List<DiscenteDTO> discenti;
 
 }
