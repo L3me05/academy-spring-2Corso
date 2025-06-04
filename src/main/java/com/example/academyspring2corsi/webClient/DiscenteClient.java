@@ -21,6 +21,18 @@ public class DiscenteClient {
                 .block();
     }
 
+    public Long idDiscenteByNomeAndCognome(String nome, String cognome) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/findByNomeAndCognome")
+                        .queryParam("nome", nome)
+                        .queryParam("cognome", cognome)
+                        .build())
+                .retrieve()
+                .bodyToMono(Long.class)
+                .block();
+    }
+
 
 
 
