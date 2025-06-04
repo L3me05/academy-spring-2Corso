@@ -5,7 +5,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
 
 @Component
 public class DocenteClient {
@@ -14,13 +13,14 @@ public class DocenteClient {
     public DocenteClient() {
         this.webClient = WebClient.create("http://localhost:8080/docenti");
     }
-    public List<DocenteDTO> findAllDocenti() {
-        return webClient.method(HttpMethod.GET)
-                .uri("/list")
-                .retrieve()
-                .bodyToMono(List.class)
-                .block();
-    }
+
+//    public List<DocenteDTO> findAllDocenti() {
+//        return webClient.method(HttpMethod.GET)
+//                .uri("/list")
+//                .retrieve()
+//                .bodyToMono(List.class)
+//                .block();
+//    }
 
     public DocenteDTO docenteById(Long id) {
         return webClient.method(HttpMethod.GET)
