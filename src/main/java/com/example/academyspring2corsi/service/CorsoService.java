@@ -66,8 +66,16 @@ public class CorsoService {
         }
         
         updateCorso(corso, corsoDTO);
-        return corsoMapper.corsoToDto(corsoRepository.save(corso));
+        Corso savedCorso = corsoRepository.save(corso);
+
+        if (corsoDTO.getDiscenti() != null) {
+            removeExistingDiscenti(id);
+            saveDiscenti(corsoDTO, id);
+        }
+
+        return corsoMapper.corsoToDto(savedCorso);
     }
+
 
     @Transactional
     public void delete(Long id) {
@@ -75,6 +83,7 @@ public class CorsoService {
             throw new EntityNotFoundException("Corso non trovato con id: " + id);
         }
         corsoRepository.deleteById(id);
+        removeExistingDiscenti(id);
     }
 
 
@@ -123,7 +132,11 @@ public class CorsoService {
                 })
                 .filter(Objects::nonNull)
                 .forEach(corsoDiscenteRepository::save);
-}
+    }
+
+    private void removeExistingDiscenti(Long idCorso) {
+        corsoDiscenteRepository.deleteByIdCorso(idCorso);
+    }
 
     private void updateCorso(Corso corso, CorsoDTO corsoDTO) {
         Optional.ofNullable(corsoDTO.getNome()).ifPresent(corso::setNome);

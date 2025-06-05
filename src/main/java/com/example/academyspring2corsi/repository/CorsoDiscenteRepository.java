@@ -12,4 +12,6 @@ public interface CorsoDiscenteRepository extends JpaRepository <CorsoDiscente, L
 
     @Query("SELECT cd.idDiscente FROM CorsoDiscente cd WHERE cd.idCorso = :idCorso")
     List<Long> findIdsDiscenteByIdCorso(Long idCorso);
+
+    void deleteByIdCorso(Long idCorso);
 }
