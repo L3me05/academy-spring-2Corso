@@ -3,6 +3,7 @@ package com.example.academyspring2corsi.service;
 
 import com.example.academyspring2corsi.data.dto.CorsoDTO;
 import com.example.academyspring2corsi.data.dto.DiscenteDTO;
+import com.example.academyspring2corsi.data.dto.DocenteDTO;
 import com.example.academyspring2corsi.data.entity.Corso;
 import com.example.academyspring2corsi.data.entity.CorsoDiscente;
 import com.example.academyspring2corsi.mapstruct.CorsoMapper;
@@ -29,25 +30,24 @@ public class CorsoService {
     private final CorsoDiscenteRepository corsoDiscenteRepository;
     private final DiscenteClient discenteClient;
 
+
     public List<CorsoDTO> findAll() {
         return corsoRepository.findAll().stream()
-                .map(corsoMapper::corsoToDto)
-                .peek(this::loadDocenteOnCorso)
-                .peek(this::loadDiscentiOnCorso)
+                .map(corso -> {
+                    CorsoDTO dto = corsoMapper.corsoToDto(corso);
+                    loadDocenteOnCorso(dto, corso.getIdDocente());
+                    loadDiscentiOnCorso(dto);
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
-    public CorsoDTO get(Long id) {
-        return corsoRepository.findById(id)
-                .map(corsoMapper::corsoToDto)
-                .orElseThrow(() -> new EntityNotFoundException("Corso non trovato con id: " + id));
-    }
 
     @Transactional
     public CorsoDTO save(CorsoDTO corsoDTO) {
-        validateDocente(corsoDTO.getIdDocente());
-
+        Long idDocente = validateOrCreateDocente(corsoDTO.getDocente());
         Corso corso = corsoMapper.corsoToEntity(corsoDTO);
+        corso.setIdDocente(idDocente);
         Corso savedCorso = corsoRepository.save(corso);
 
         saveDiscenti(corsoDTO, savedCorso.getId());
@@ -56,19 +56,22 @@ public class CorsoService {
     }
 
 
+
+
     @Transactional
     public CorsoDTO update(Long id, CorsoDTO corsoDTO) {
         Corso corso = corsoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Corso non trovato con id: " + id));
-        
-        if (corsoDTO.getIdDocente() != null) {
-            validateDocente(corsoDTO.getIdDocente());
+
+        Long idDocente=null;
+        if (!Objects.isNull(corsoDTO.getDocente())) {
+            idDocente =validateOrCreateDocente(corsoDTO.getDocente());
         }
         
-        updateCorso(corso, corsoDTO);
+        updateCorso(corso, corsoDTO, idDocente );
         Corso savedCorso = corsoRepository.save(corso);
 
-        if (corsoDTO.getDiscenti() != null) {
+        if (!Objects.isNull(corsoDTO.getDiscenti())) {
             removeExistingDiscenti(id);
             saveDiscenti(corsoDTO, id);
         }
@@ -89,8 +92,8 @@ public class CorsoService {
 
 
 
-    private void loadDocenteOnCorso(CorsoDTO corsoDTO) {
-        corsoDTO.setDocente(docenteClient.docenteById(corsoDTO.getIdDocente()));
+    private void loadDocenteOnCorso(CorsoDTO corsoDTO, Long idDocente ) {
+        corsoDTO.setDocente(docenteClient.docenteById(idDocente));
     }
 
     private void loadDiscentiOnCorso(CorsoDTO corsoDTO) {
@@ -105,11 +108,20 @@ public class CorsoService {
         corsoDTO.setDiscenti(discenti);
     }
 
-    private void validateDocente(Long idDocente) {
-        if (idDocente != null && !docenteClient.existsById(idDocente)) {
-            throw new EntityNotFoundException("Docente non trovato con id: " + idDocente);
+    private Long validateOrCreateDocente(DocenteDTO docenteDTO) {
+        if (Objects.isNull(docenteDTO)) return null;
+        else {
+            Long idDocente = docenteClient.findIdByNomeAndCognome(docenteDTO.getNome(), docenteDTO.getCognome());
+            if (idDocente == null) idDocente= docenteClient.createDocenteAndReturnId(docenteDTO);
+            return idDocente;
         }
     }
+
+//    private void validateDocente(Long idDocente) {
+//        if (idDocente != null && !docenteClient.existsById(idDocente)) {
+//            throw new EntityNotFoundException("Docente non trovato con id: " + idDocente);
+//        }
+//    }
 
     private void saveDiscenti(CorsoDTO corsoDTO, Long idCorso) {
         if (corsoDTO.getDiscenti() == null) {
@@ -122,25 +134,30 @@ public class CorsoService {
                         discenteDTO.getNome(), 
                         discenteDTO.getCognome()
                     );
-                    if (idDiscente != null) {
-                        CorsoDiscente corsoDiscente = new CorsoDiscente();
-                        corsoDiscente.setIdCorso(idCorso);
-                        corsoDiscente.setIdDiscente(idDiscente);
-                        return corsoDiscente;
+                    if (idDiscente == null) {
+                        discenteClient.createDiscente(discenteDTO);
+                        idDiscente = discenteClient.idDiscenteByNomeAndCognome(
+                            discenteDTO.getNome(),
+                            discenteDTO.getCognome()
+                        );
                     }
-                    return null;
+                    CorsoDiscente corsoDiscente = new CorsoDiscente();
+                    corsoDiscente.setIdCorso(idCorso);
+                    corsoDiscente.setIdDiscente(idDiscente);
+                    return corsoDiscente;
+
                 })
-                .filter(Objects::nonNull)
                 .forEach(corsoDiscenteRepository::save);
     }
+
 
     private void removeExistingDiscenti(Long idCorso) {
         corsoDiscenteRepository.deleteByIdCorso(idCorso);
     }
 
-    private void updateCorso(Corso corso, CorsoDTO corsoDTO) {
+    private void updateCorso(Corso corso, CorsoDTO corsoDTO, Long idDocente ) {
         Optional.ofNullable(corsoDTO.getNome()).ifPresent(corso::setNome);
         Optional.ofNullable(corsoDTO.getAnnoAccademico()).ifPresent(corso::setAnnoAccademico);
-        Optional.ofNullable(corsoDTO.getIdDocente()).ifPresent(corso::setIdDocente);
+        Optional.ofNullable(idDocente).ifPresent(corso::setIdDocente);
     }
 }

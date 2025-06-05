@@ -16,21 +16,47 @@ public class DocenteClient {
 
 
     public DocenteDTO docenteById(Long id) {
-        return webClient.method(HttpMethod.GET)
-                .uri("/findById?id={id}" ,id)
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/findById")
+                        .queryParam("id", id)
+                        .build())
                 .retrieve()
                 .bodyToMono(DocenteDTO.class)
                 .block();
     }
 
-    public boolean existsById(Long id) {
-        return Boolean.TRUE.equals(webClient.method(HttpMethod.GET)
+
+//    public boolean existsById(Long id) {
+//        return Boolean.TRUE.equals(webClient.method(HttpMethod.GET)
+//                .uri(uriBuilder -> uriBuilder
+//                        .path("/present")
+//                        .queryParam("id", id)
+//                        .build())
+//                .retrieve()
+//                .bodyToMono(Boolean.class)
+//                .block());
+//    }
+
+    public Long findIdByNomeAndCognome(String nome, String cognome) {
+        return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/present")
-                        .queryParam("id", id)
+                        .path("/findIdByNomeAndCognome")
+                        .queryParam("nome", nome)
+                        .queryParam("cognome", cognome)
                         .build())
                 .retrieve()
-                .bodyToMono(Boolean.class)
-                .block());
+                .bodyToMono(Long.class)
+                .block();
+    }
+
+    public Long createDocenteAndReturnId(DocenteDTO docenteDTO) {
+        return webClient.post()
+                .uri("/createAndReturnId")
+                .bodyValue(docenteDTO)
+                .header("Content-Type", "application/json")
+                .retrieve()
+                .bodyToMono(Long.class)
+                .block();
     }
 }

@@ -33,6 +33,15 @@ public class DiscenteClient {
                 .block();
     }
 
+    public DiscenteDTO createDiscente(DiscenteDTO discenteDTO) {
+        return webClient.post()
+                .bodyValue(discenteDTO)
+                .header("Content-Type", "application/json")
+                .retrieve()
+                .bodyToMono(DiscenteDTO.class)
+                .block();
+    }
+
 
 
 

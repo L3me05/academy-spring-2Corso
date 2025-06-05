@@ -4,6 +4,7 @@ import com.example.academyspring2corsi.data.dto.CorsoDTO;
 import com.example.academyspring2corsi.data.dto.DocenteDTO;
 import com.example.academyspring2corsi.service.CorsoService;
 import jakarta.servlet.ServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,11 +12,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/corsi")
+@RequiredArgsConstructor
 public class CorsoController {
 
-    @Autowired
-    CorsoService corsoService;
 
+    private final CorsoService corsoService;
 
     //lista
     @GetMapping("/list")
