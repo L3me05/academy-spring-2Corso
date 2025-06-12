@@ -1,4 +1,4 @@
-package com.example.academyspring2corsi.data.entity;
+package com.example.academyspring2corsi.data.entityCorso;
 
 import jakarta.persistence.*;
 import lombok.Getter;
