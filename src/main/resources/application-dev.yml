@@ -3,17 +3,36 @@ spring:
     name: academy-spring-2Corsi
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/academy_elite_corso
+    jdbcUrl: jdbc:postgresql://localhost:5432/academy_elite_corso
     username: postgres
     password: Lemuel05
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+auth:
+  datasource:
+    jdbcUrl: jdbc:postgresql://localhost:5432/academy_elite_security  # Modificato da 'url' a 'jdbcUrl'
+    username: postgres
+    password: Lemuel05
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
 
 server:
   port: 8081
   error:
     # Per visualizzare tutti gli errori
     include-stacktrace: always
+

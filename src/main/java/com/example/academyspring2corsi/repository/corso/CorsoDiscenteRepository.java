@@ -1,6 +1,6 @@
-package com.example.academyspring2corsi.repository;
+package com.example.academyspring2corsi.repository.corso;
 
-import com.example.academyspring2corsi.data.entity.CorsoDiscente;
+import com.example.academyspring2corsi.data.entityCorso.CorsoDiscente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
