@@ -19,3 +19,16 @@ server:
 
 jwt:
   secret: mySecretKeyForJWTTokenGenerationThatShouldBeAtLeast256BitsLong
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
+        #http://localhost:8081/swagger-ui/index.html
+        #http://localhost:8081/v3/api-docs

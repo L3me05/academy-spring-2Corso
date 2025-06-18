@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data                       //genera getters and setters ha bisogno di un argument constructor
 public class DocenteDTO {
 
-
+    private Long id;
     private String nome;
     private String cognome;
     private String dataNascita;

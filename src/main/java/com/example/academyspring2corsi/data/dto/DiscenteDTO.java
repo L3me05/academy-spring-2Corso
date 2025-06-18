@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DiscenteDTO {
 
-
+    private Long id;
     private String nome;
     private String cognome;
     private Integer matricola;

@@ -2,6 +2,7 @@ package com.example.academyspring2corsi.controller;
 
 import com.example.academyspring2corsi.data.dto.CorsoDTO;
 import com.example.academyspring2corsi.data.dto.DocenteDTO;
+import com.example.academyspring2corsi.data.entity.Corso;
 import com.example.academyspring2corsi.service.CorsoService;
 import jakarta.servlet.ServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,8 @@ public class CorsoController {
         corsoService.delete(id);
     }
 
-
+    public CorsoDTO findById(@RequestParam Long id) {
+        return corsoService.findById(id);
+    }
 
 }

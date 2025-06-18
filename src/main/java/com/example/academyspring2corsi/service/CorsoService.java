@@ -160,4 +160,14 @@ public class CorsoService {
         Optional.ofNullable(corsoDTO.getAnnoAccademico()).ifPresent(corso::setAnnoAccademico);
         Optional.ofNullable(idDocente).ifPresent(corso::setIdDocente);
     }
+
+    public CorsoDTO findById(Long id) {
+        Corso corso = corsoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Corso non trovato con id: " + id));
+        
+        CorsoDTO dto = corsoMapper.corsoToDto(corso);
+        loadDocenteOnCorso(dto, corso.getIdDocente());
+        loadDiscentiOnCorso(dto);
+        return dto;
+    }
 }
