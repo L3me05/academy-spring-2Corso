@@ -41,6 +41,7 @@ public class CorsoController {
         corsoService.delete(id);
     }
 
+    @GetMapping("/findById")
     public CorsoDTO findById(@RequestParam Long id) {
         return corsoService.findById(id);
     }
